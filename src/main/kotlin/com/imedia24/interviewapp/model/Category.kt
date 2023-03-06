@@ -18,10 +18,10 @@ class Category(
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    @JsonBackReference
+    @JsonManagedReference
     var parentCategory: Category?,
 
     @OneToMany(mappedBy = "parentCategory")
-    @JsonManagedReference
+    @JsonBackReference
     var subCategories: Set<Category> = emptySet()
 )

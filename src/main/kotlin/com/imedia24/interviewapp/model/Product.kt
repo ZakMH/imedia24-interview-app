@@ -11,9 +11,9 @@ class Product(
 
     var name: String,
 
-    var price: Double,
-
     var image: String,
+
+    var price: Double,
 
     @ManyToMany
     @JoinTable(
