@@ -2,6 +2,7 @@ package com.imedia24.interviewapp.model
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 
@@ -18,10 +19,12 @@ class Category(
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnoreProperties("subCategories")
     var parentCategory: Category?,
 
     @OneToMany(mappedBy = "parentCategory")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnoreProperties("parentCategory")
     var subCategories: Set<Category> = emptySet()
 )

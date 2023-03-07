@@ -23,4 +23,24 @@ class CategoryController(val categoryService: CategoryService) {
     @PutMapping("/{id}")
     fun updateCategory(@PathVariable id: Long, @RequestBody update: Map<String, String>) =
         categoryService.updateCategory(id, update["name"]!!)
+
+    @PutMapping("/{id}/sub-categories/{childId}")
+    fun addChildCategory(@PathVariable id: Long, @PathVariable childId: Long) =
+        categoryService.addChildCategory(id, childId)
+
+//    @PutMapping("{id}/bind-parent-category/{parentId}")
+//    fun bindCategoryToParentCategory(@PathVariable id: Long, @PathVariable parentId: Long) =
+//        categoryService.bindCategoryToParentCategory(id, parentId)
+
+    @PutMapping("/{id}/unbind-parent-category")
+    fun unbindCategoryToParentCategory(@PathVariable id: Long, @PathVariable childId: Long) =
+        categoryService.removeChildCategory(id, childId)
+
+    @PutMapping("/{id}/add-product/{productId}")
+    fun addProductToCategory(@PathVariable id: Long, @PathVariable productId: Long) =
+        categoryService.addProductToCategory(id, productId)
+
+    @PutMapping("/{id}/drop-product/{productId}")
+    fun removeProductFromCategory(@PathVariable id: Long, @PathVariable productId: Long) =
+        categoryService.removeProductFromCategory(id, productId)
 }
