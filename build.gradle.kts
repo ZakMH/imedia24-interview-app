@@ -23,6 +23,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
 	implementation("org.springframework.boot:spring-boot-starter-validation:3.0.2")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
