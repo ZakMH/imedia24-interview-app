@@ -9,11 +9,11 @@ class Product(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = 0,
 
-    var name: String,
+    var name: String? = "Insert product name",
 
-    var image: String,
+    var image: String? = "/img/no-img.jpg",
 
-    var price: Double,
+    var price: Double? = 0.0,
 
     @ManyToMany
     @JoinTable(
@@ -22,4 +22,8 @@ class Product(
     )
     @JsonBackReference
     var parentCategory: Set<Category>? = emptySet()
-)
+) {
+    companion object {
+        const val CURRENCY = "EUR"
+    }
+}
