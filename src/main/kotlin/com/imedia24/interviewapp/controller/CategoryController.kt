@@ -1,7 +1,10 @@
 package com.imedia24.interviewapp.controller
 
+import com.imedia24.interviewapp.dto.CategoryDto
 import com.imedia24.interviewapp.model.Category
 import com.imedia24.interviewapp.service.CategoryService
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -9,38 +12,54 @@ import org.springframework.web.bind.annotation.*
 class CategoryController(val categoryService: CategoryService) {
 
     @GetMapping("/")
-    fun getCategories() = categoryService.getCategories()
+    fun getCategories(): ResponseEntity<List<Category>> {
+        val categories = categoryService.getCategories()
+        return ResponseEntity.ok(categories)
+    }
 
     @GetMapping("/{id}")
-    fun getCategoryById(@PathVariable id: Long) = categoryService.getCategoryById(id)
+    fun getCategoryById(@PathVariable id: Long): ResponseEntity<Category> {
+        val category = categoryService.getCategoryById(id)
+        return ResponseEntity.ok(category)
+    }
 
     @PostMapping("/")
-    fun addCategory(@RequestBody category: Category) = categoryService.addCategory(category)
+    fun addCategory(@RequestBody categoryDto: CategoryDto): ResponseEntity<Category> {
+        val category = categoryService.addCategory(categoryDto)
+        return ResponseEntity(category, HttpStatusCode.valueOf(201))
+    }
 
     @DeleteMapping("/{id}")
-    fun removeCategory(@PathVariable id: Long) = categoryService.removeCategory(id)
+    fun removeCategory(@PathVariable id: Long): ResponseEntity<Any> {
+        categoryService.removeCategory(id)
+        return ResponseEntity.noContent().build()
+    }
 
     @PutMapping("/{id}")
-    fun updateCategory(@PathVariable id: Long, @RequestBody update: Map<String, String>) =
-        categoryService.updateCategory(id, update["name"]!!)
+    fun updateCategory(@PathVariable id: Long, @RequestBody categoryDto: CategoryDto): ResponseEntity<Category> {
+        val category = categoryService.updateCategory(id, categoryDto)
+        return ResponseEntity(category, HttpStatusCode.valueOf(204))
+    }
 
-    @PutMapping("/{id}/sub-categories/{childId}")
-    fun addChildCategory(@PathVariable id: Long, @PathVariable childId: Long) =
-        categoryService.addChildCategory(id, childId)
+    @PutMapping("/{id}/bind-sub-category/{subId}")
+    fun bindSubCategory(@PathVariable id: Long, @PathVariable subId: Long): ResponseEntity<Any> {
+        if (categoryService.isParentCategory(subId, id))
+            return ResponseEntity(
+                mapOf("message" to "Category with id $subId cannot be parent & child at once of Category with id $id"),
+                HttpStatusCode.valueOf(400)
+            )
+        val category = categoryService.bindSubCategory(id, subId)
+        return ResponseEntity(category, HttpStatusCode.valueOf(204))
+    }
 
-//    @PutMapping("{id}/bind-parent-category/{parentId}")
-//    fun bindCategoryToParentCategory(@PathVariable id: Long, @PathVariable parentId: Long) =
-//        categoryService.bindCategoryToParentCategory(id, parentId)
-
-    @PutMapping("/{id}/unbind-parent-category")
-    fun unbindCategoryToParentCategory(@PathVariable id: Long, @PathVariable childId: Long) =
-        categoryService.removeChildCategory(id, childId)
-
-    @PutMapping("/{id}/add-product/{productId}")
-    fun addProductToCategory(@PathVariable id: Long, @PathVariable productId: Long) =
-        categoryService.addProductToCategory(id, productId)
-
-    @PutMapping("/{id}/drop-product/{productId}")
-    fun removeProductFromCategory(@PathVariable id: Long, @PathVariable productId: Long) =
-        categoryService.removeProductFromCategory(id, productId)
+    @PutMapping("/{id}/unbind-sub-category/{subId}")
+    fun unbindSubCategory(@PathVariable id: Long, @PathVariable subId: Long): ResponseEntity<Any> {
+        if (!categoryService.isParentCategory(id, subId))
+            return ResponseEntity(
+                mapOf("message" to "Category with id $id isn't the parent of Category with id $subId"),
+                HttpStatusCode.valueOf(400)
+            )
+        val category = categoryService.unbindSubCategory(subId)
+        return ResponseEntity(category, HttpStatusCode.valueOf(204))
+    }
 }

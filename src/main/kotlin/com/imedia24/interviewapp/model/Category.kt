@@ -11,7 +11,7 @@ class Category(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    var name: String,
+    var name: String? = "Insert category name",
 
     @ManyToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -19,12 +19,10 @@ class Category(
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-//    @JsonManagedReference
     @JsonIgnoreProperties("subCategories")
-    var parentCategory: Category?,
+    var parentCategory: Category? = null,
 
     @OneToMany(mappedBy = "parentCategory")
-//    @JsonBackReference
     @JsonIgnoreProperties("parentCategory")
     var subCategories: Set<Category> = emptySet()
 )
