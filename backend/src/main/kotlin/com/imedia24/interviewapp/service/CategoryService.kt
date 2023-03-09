@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class CategoryService(val categoryRepository: CategoryRepository) {
 
-    fun getCategories(): List<Category> = categoryRepository.findAll().toList()
+    fun getCategories(): List<Category> = categoryRepository.findAll().toList().filter { it.parentCategory == null }
 
     fun getCategoryById(id: Long): Category = categoryRepository.findById(id).get()
 
